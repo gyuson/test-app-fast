@@ -1,0 +1,32 @@
+name: Dev Android Build and Upload
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  build_web:
+    name: Build Android Debug Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: kuhnroyal/flutter-fvm-config-action@v1
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: ${{ env.FLUTTER_CHANNEL }}
+
+      - run: flutter pub get
+      - run: flutter build apk --debug --split-per-abi
+
+      - name: Get version
+        id: yq
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq -r '.version' 'pubspec.yaml'
+
+      - name: Upload apk
+        uses: actions/upload-artifact@v2
+        with:
+          name: debug-apk-${{ steps.yq.outputs.result }}
+          path: build/app/outputs/flutter-apk/app-arm64-v8a-debug.apk

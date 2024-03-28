@@ -1,0 +1,75 @@
+name: fast_flutter_template
+description: A new Flutter project.
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.1.4 <4.0.0"
+
+dependencies:
+  auto_route: ^8.0.0
+  awesome_flutter_extensions: ^1.1.1
+  cached_network_image: ^3.3.0
+  firebase_core: ^2.22.0
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  hive_flutter: ^1.1.0
+  intl: ^0.18.1
+  introduction_screen: ^3.1.12
+  logger: ^2.0.2+1
+  package_info_plus: ^6.0.0
+  rate_my_app: ^2.0.0
+  riverpod_annotation: ^2.2.1
+  settings_ui: ^2.0.2
+  url_launcher: ^6.2.0
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.8.1
+  sign_button: ^2.0.6
+  firebase_auth: ^4.13.0
+  firebase_remote_config: ^4.3.4
+  firebase_analytics: ^10.7.0
+  firebase_messaging: ^14.7.4
+  cloud_firestore: ^4.13.1
+  collection: ^1.17.2
+  image_picker: ^1.0.4
+  firebase_storage: ^11.5.2
+  hooks_riverpod: ^2.4.9
+  flutter_hooks: ^0.20.3
+  golden_toolkit: ^0.15.0
+  purchases_flutter: ^6.5.0
+  
+dev_dependencies:
+  custom_lint: ^0.6.4
+  flutter_lints: ^3.0.1
+  flutter_test:
+    sdk: flutter
+  riverpod_lint: ^2.3.3
+  build_runner: ^2.4.6
+  riverpod_generator: ^2.3.5
+  auto_route_generator: ^8.0.0
+  freezed: ^2.4.5
+  json_serializable: ^6.7.1
+  flutter_launcher_icons: ^0.13.1
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+
+flutter_intl:
+  enabled: true
+
+# https://pub.dev/packages/flutter_launcher_icons
+# flutter pub run flutter_launcher_icons
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/rocket.png"
+  remove_alpha_ios: true
+  adaptive_icon_background: "#242425"
+  adaptive_icon_foreground: "assets/images/rocket.png"

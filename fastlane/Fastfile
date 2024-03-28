@@ -1,0 +1,65 @@
+default_platform(:ios)
+
+# This is optional
+# I like to keep a changelog and directly upload it 
+changelog = '../CHANGELOG.md'
+upcoming_release_notes = File.read(changelog).split("\n## ")[2]
+
+platform :ios do
+  desc "Push a new beta build to TestFlight"
+  lane :deploy_testflight do
+    # this is ignored if run locally
+    # needed for CI though
+    setup_ci
+
+    # install cocoapods
+   cocoapods(
+     clean_install: true,
+     podfile: "ios/Podfile",
+   )
+
+   # connect to app store connect
+    app_store_connect_api_key(
+      is_key_content_base64: true,
+      in_house: false,
+    )
+
+    # fetch signing certificates
+    match(
+      readonly: true,
+      type: "appstore",
+      git_basic_authorization: ENV["MATCH_GIT_BASIC_AUTHORIZATION"] #TODO 
+    )
+
+    # Self explanatory
+    build_app(
+      scheme: "Runner",
+      archive_path: "build/ios/archive",
+      clean: true,
+      output_directory: "build/ios/beta",
+      output_name: "yourAppName.ipa", #TODO 
+      workspace: "ios/Runner.xcworkspace",
+    )
+
+    # Self explanatory
+    upload_to_testflight(
+      ipa: "build/ios/beta/yourAppName.ipa", #TODO 
+      skip_submission: true,
+      # I recommened this for saving Github Actions computing time
+      skip_waiting_for_build_processing: true,
+    )
+  end
+end
+
+platform :android do
+
+  desc "Upload beta app to Google Play Console"
+    lane :android_internal do
+      sh "flutter build appbundle"
+      upload_to_play_store(
+        track: 'internal',
+        aab: '../build/app/outputs/bundle/release/app-release.aab',
+        json_key_data: ENV['SERVICE_ACCOUNT_JSON'], #TODO 
+        )
+    end
+  end

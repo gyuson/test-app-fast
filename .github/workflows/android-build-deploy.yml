@@ -1,0 +1,45 @@
+name: Android Build and Deploy Fastlane
+on:
+  push:
+    branches:
+      - release/**
+
+jobs:
+  android_build_release:
+    name: Android Build and Deploy Fastlane
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: kuhnroyal/flutter-fvm-config-action@v1
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          cache: true
+
+      # needed to run fastlane
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+
+      - name: Create key.properties
+        run: echo -e "storePassword=$KEYSTORE_STORE_PASSWORD\nkeyPassword=$KEYSTORE_KEY_PASSWORD\nkeyAlias=$KEYSTORE_KEY_ALIAS\nstoreFile=$PWD/android/key.jks" > android/key.properties && cat android/key.properties
+        env:
+          KEYSTORE_STORE_PASSWORD: ${{secrets.KEYSTORE_STORE_PASSWORD}}
+          KEYSTORE_KEY_PASSWORD: ${{secrets.KEYSTORE_KEY_PASSWORD}}
+          KEYSTORE_KEY_ALIAS: ${{secrets.KEYSTORE_KEY_ALIAS}}
+
+      - name: Create key.jks
+        run: echo -n $KEYSTORE_KEY_JKS | base64 -d > android/key.jks
+        env:
+          KEYSTORE_KEY_JKS: ${{secrets.KEYSTORE_KEY_JKS}}
+
+      - run: |
+          flutter pub get
+          flutter build appbundle
+
+      - name: Build and deploy Android app to internal
+        run: |
+          bundle install
+
+          bundle exec fastlane android android_internal

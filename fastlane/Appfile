@@ -1,0 +1,11 @@
+for_platform :ios do
+    app_identifier("your.bundle.identifier") #TODO The bundle identifier of your app
+    apple_id("your@apple.id") #TODO Your Apple Developer Portal username
+
+    itc_team_id("12345678") #TODO App Store Connect Team ID
+    team_id("TEAMID1234") #TODO Developer Portal Team ID
+end
+
+for_platform :android do
+    package_name("your.bundle.identifier") #TODO The bundle identifier of your app
+end

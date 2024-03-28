@@ -1,0 +1,40 @@
+# name of the workflow file
+name: ios-deploytestflight
+on:
+  push:
+    # only run on release branches
+    branches:
+      - release/*
+jobs:
+  # name of the action
+  ios-deploy-testflight:
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@v3
+      - uses: kuhnroyal/flutter-fvm-config-action@v1
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          cache: true
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+
+      - run: flutter pub get
+
+      - name: Build and deploy iOS app to testflight through fastlane
+        run: |
+          bundle install
+
+          bundle exec fastlane ios deploy_testflight
+
+        env:
+          APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID}}
+          APP_STORE_CONNECT_API_KEY_KEY: ${{secrets.APP_STORE_CONNECT_API_KEY_KEY}}
+          APP_STORE_CONNECT_API_KEY_KEY_ID: ${{secrets.APP_STORE_CONNECT_API_KEY_KEY_ID}}
+          MATCH_PASSWORD: ${{secrets.MATCH_PASSWORD}}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{secrets.GIT_BASIC_AUTHORIZATION}}
+
+
